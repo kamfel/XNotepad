@@ -1,0 +1,139 @@
+﻿<UserControl x:Class="XNotepad.UI.View.FindView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:XNotepad.UI.View"
+             xmlns:ctrl="clr-namespace:XNotepad.UI.Controls"
+             xmlns:res="clr-namespace:XNotepad.UI.Resources"
+             xmlns:conv="clr-namespace:XNotepad.UI.ValueConverters"
+             xmlns:design="clr-namespace:XNotepad.UI.ViewModel.Design"
+             xmlns:enum="clr-namespace:XNotepad.Core.Enums;assembly=XNotepad.Core"
+             xmlns:close="clr-namespace:XNotepad.Core.Interfaces;assembly=XNotepad.Core"
+             mc:Ignorable="d"
+             Width="500"
+             Height="100"
+             d:DesignHeight="200" d:DesignWidth="500"
+             d:DataContext="{x:Static design:FindDesignViewModel.Instance}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Styles\ButtonStyles.xaml"/>
+                <ResourceDictionary Source="..\Styles\MiscStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <DockPanel Margin="0 5">
+                <Label Content="Szukany tekst:"/>
+                <TextBox Text="{Binding SearchedText, UpdateSourceTrigger=PropertyChanged}"
+                         Height="25"
+                         VerticalContentAlignment="Center"/>
+            </DockPanel>
+
+            <Grid Grid.Row="2">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <GroupBox Header="Ustawienia"
+                          Grid.Column="0">
+                    <StackPanel Margin="0 3 0 0">
+                        <CheckBox Content="Uwzględniaj wielkość liter"
+                                  Height="15"
+                                  IsChecked="{Binding IgnoreCase}"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Tryb wyszukiwania"
+                          Grid.Column="1">
+                    <StackPanel Margin="0 3 0 0">
+                        <RadioButton Content="Standardowy"
+                                     IsChecked="{Binding SearchMode, Converter={conv:ComparisonConverter}, ConverterParameter={x:Static enum:SearchModeEnum.Default}}"/>
+                        <RadioButton Content="Regex"
+                                     IsChecked="{Binding SearchMode, Converter={conv:ComparisonConverter}, ConverterParameter={x:Static enum:SearchModeEnum.Regex}}"/>
+                    </StackPanel>
+                </GroupBox>
+
+            </Grid>
+
+        </Grid>
+
+        <Grid Grid.Column="1"
+                    Margin="2">
+
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+                <Button DockPanel.Dock="Top"
+                    HorizontalAlignment="Right"
+                    Style="{StaticResource TextButton}"
+                    Command="{Binding FindNextCommand}"
+                        IsEnabled="{Binding CanFindNext}">
+                    <ctrl:LoadableContentHost Loading="{Binding IsWaitingForNextMatch}">
+                        <TextBlock Text="{x:Static res:Strings.FindWindow_FindNext}"/>
+                    </ctrl:LoadableContentHost>
+                </Button>
+                <Button DockPanel.Dock="Top"
+                    Style="{StaticResource TextButton}"
+                    Content="{x:Static res:Strings.Button_Cancel}"
+                        Command="{Binding CloseCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type close:ICloseable}}}"/>
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="10 0 0 0"
+                           Visibility="{Binding HasResults, Converter={conv:BooleanVisiblityConverter}}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}/{1}">
+                            <MultiBinding.Bindings>
+                                <Binding Path="CurrentOffsetIndex"/>
+                                <Binding Path="FoundCount"/>
+                            </MultiBinding.Bindings>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <ctrl:LoadableContentHost Grid.Column="1" 
+                                          Loading="{Binding IsSearching}" 
+                                          Height="25"/>
+            </Grid>
+            
+        </Grid>
+
+
+
+    </Grid>
+</UserControl>

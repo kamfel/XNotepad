@@ -1,0 +1,91 @@
+﻿<Window x:Class="XNotepad.MainWindow"
+        x:Name="mainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XNotepad"
+        xmlns:res="clr-namespace:XNotepad.UI.Resources"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        xmlns:design="clr-namespace:XNotepad.UI.ViewModel.Design"
+        xmlns:conv="clr-namespace:XNotepad.UI.ValueConverters"
+        xmlns:control="clr-namespace:XNotepad.UI.Controls"
+        xmlns:vm="clr-namespace:XNotepad.UI.ViewModel"
+        xmlns:view="clr-namespace:XNotepad.UI.View"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+        mc:Ignorable="d"
+        d:DataContext="{x:Static design:MainWindowDesignViewModel.Instance}"
+        Title="Notepad" Height="600" Width="900">
+        <!--d:DataContext="{x:Static design:MainWindowDesignViewModel.Instance}"-->
+    <Window.Resources>
+        <ResourceDictionary>
+            <DataTemplate DataType="{x:Type vm:EditorViewModel}">
+                <view:EditorView />
+            </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl"
+                    Key="S"
+                    Command="{Binding SaveFileCommand}"
+                    CommandParameter="{Binding ViewDataContext.CurrentDocument.Id}"/>
+        <KeyBinding Modifiers="Ctrl+Shift"
+                    Key="S"
+                    Command="{Binding SaveFileAsCommand}"
+                    CommandParameter="{Binding ViewDataContext.CurrentDocument.Id}"/>
+        <KeyBinding Modifiers="Ctrl"
+                    Key="N"
+                    Command="{Binding NewFileCommand}"/>
+        <KeyBinding Modifiers="Ctrl"
+                    Key="O"
+                    Command="{Binding OpenFileCommand}"/>
+    </Window.InputBindings>
+    
+    
+    <DockPanel>
+        <!-- Menu bar -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="{x:Static res:Strings.FileMenu}">
+                <MenuItem Header="{x:Static res:Strings.FileMenu_New}"
+                          InputGestureText="{x:Static res:StringsInvariant.FileMenu_New_Shortcut}"
+                          Command="{Binding NewFileCommand}"/>
+                <MenuItem Header="{x:Static res:Strings.FileMenu_Open}"
+                          InputGestureText="{x:Static res:StringsInvariant.FileMenu_Open_Shortcut}"
+                          Command="{Binding OpenFileCommand}"/>
+                <MenuItem Header="{x:Static res:Strings.FileMenu_Save}"
+                          InputGestureText="{x:Static res:StringsInvariant.FileMenu_Save_Shortcut}"
+                          Command="{Binding SaveFileCommand}"
+                          CommandParameter="{Binding ViewDataContext.CurrentDocument.Id}"/>
+                <MenuItem Header="{x:Static res:Strings.FileMenu_SaveAs}"
+                          InputGestureText="{x:Static res:StringsInvariant.FileMenu_SaveAs_Shortcut}"
+                          Command="{Binding SaveFileAsCommand}"
+                          CommandParameter="{Binding ViewDataContext.CurrentDocument.Id}"/>
+            </MenuItem>
+
+            <MenuItem Header="{x:Static res:Strings.EditMenu}">
+                <MenuItem Header="{x:Static res:Strings.EditMenu_Find}"
+                          Command="{Binding OpenFindDialogCommand}"/>
+            </MenuItem>
+            
+            <MenuItem Header="{x:Static res:Strings.OptionsMenu}">
+                <MenuItem Header="{x:Static res:Strings.FontMenu}"
+                          Command="{Binding OpenFontOptionsCommand}"/>
+                <MenuItem Header="{x:Static res:Strings.AutoSaveOptionsMenu}"
+                          Command="{Binding OpenAutoSaveOptionsCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Footer -->
+        <control:Footer DockPanel.Dock="Bottom"
+                        FilePath="{Binding ViewDataContext.CurrentDocument.FilePath}"
+                        FileState="{Binding ViewDataContext.CurrentDocument.DocumentState, Converter={conv:EnumConverter}}"
+                        LineNumber="{Binding ViewDataContext.CurrentLine}"
+                        ColumnNumber="{Binding ViewDataContext.CurrentColumn}"
+                        EncodingName="{Binding ViewDataContext.CurrentDocument.Encoding.EncodingName}"/>
+
+        <!-- View -->
+        <ContentControl Content="{Binding ViewDataContext}"/>
+
+    </DockPanel>
+</Window>

@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="XNotepad.UI.Controls.LoadableContentHost"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:XNotepad.UI.ValueConverters"
+             mc:Ignorable="d" 
+             x:Name="uc"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary Source="..\Styles\MiscStyles.xaml"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <ContentPresenter Content="{Binding UserContent,ElementName=uc}"
+                          Visibility="{Binding Loading, ElementName=uc, Converter={conv:InvertedBooleanVisiblityConverter}}"/>
+
+        <Viewbox Margin="3"
+                 Visibility="{Binding Loading, ElementName=uc, Converter={conv:BooleanVisiblityConverter}}">
+            <Path Fill="Black" 
+                      Style="{StaticResource SpinningPath}"
+                      Data="{Binding Spinner, ElementName=uc}"/>
+        </Viewbox>
+
+    </Grid>
+
+</UserControl>

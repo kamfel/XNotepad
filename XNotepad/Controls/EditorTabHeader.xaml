@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="XNotepad.UI.Controls.EditorTabHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:XNotepad.UI.Controls"
+             xmlns:res="clr-namespace:XNotepad.UI.Resources"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+             x:Name="uc"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="150">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <sys:Double x:Key="ButtonOpacity">0.3</sys:Double>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    
+    <DockPanel >
+
+        <Button DockPanel.Dock="Right" 
+                Height="{Binding Height, ElementName=uc}" 
+                Opacity="{StaticResource ButtonOpacity}" 
+                Focusable="False"
+                Command="{Binding CloseCommand, ElementName=uc}"
+                CommandParameter="{Binding Id}">
+            <Viewbox >
+                <Path x:Name="CloseIcon" Fill="Black"/>
+            </Viewbox>
+
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter Margin="5 5 0 5"/>
+
+                    <ControlTemplate.Triggers >
+                        <EventTrigger RoutedEvent="Button.MouseEnter">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard>
+                                    <Storyboard >
+                                        <DoubleAnimation Duration="0:0:0.3" From="{StaticResource ButtonOpacity}" To="1" Storyboard.TargetProperty="Opacity"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Button.MouseLeave">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0:0:0.15" From="1" To="{StaticResource ButtonOpacity}" Storyboard.TargetProperty="Opacity"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+
+        </Button>
+
+        <Label Content="{Binding FileName}" 
+               Padding="1" 
+               VerticalAlignment="Center" 
+               HorizontalContentAlignment="Center"/>
+    </DockPanel>
+    
+    
+</UserControl>
